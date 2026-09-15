@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using STS2RitsuLib;
 using STS2RitsuLib.Interop;
+using HardcoreSts2.Modifiers;
 using Logger = MegaCrit.Sts2.Core.Logging.Logger;
 
 namespace HardcoreSts2;
@@ -32,6 +33,9 @@ public partial class Entry
         // 自动注册扫描会读取当前程序集里的 RegisterCard/RegisterRelic 等 attribute。
         // 新增内容类后，只要 attribute 写对，通常不需要在入口里手动逐个注册。
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
+
+        // 通过反射自动发现并注册当前程序集中的所有 Modifier 子类。
+        ModifierManager.AutoRegister(assembly, Logger);
 
         Logger.Info("HardcoreSts2 initialized.");
     }
