@@ -1,0 +1,17 @@
+{
+  "id": "HardcoreSts2",
+  "name": "HardcoreSts2",
+  "pck_name": "HardcoreSts2",
+  "author": "Author",
+  "description": "A starter Slay the Spire 2 mod template built on RitsuLib.",
+  "version": "0.0.0",
+  "has_pck": true,
+  "has_dll": true,
+  "affects_gameplay": true,
+  "min_game_version": "0.111.0",
+  "dependencies": [
+    {
+      "id": "STS2-RitsuLib"
+    }
+  ]
+}
