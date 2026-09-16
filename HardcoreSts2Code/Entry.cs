@@ -1,9 +1,12 @@
 using System.Reflection;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
 using STS2RitsuLib;
 using STS2RitsuLib.Interop;
+using STS2RitsuLib.Scaffolding.Godot.NodeAttachments;
 using HardcoreSts2.Modifiers;
+using HardcoreSts2.Ui;
 using Logger = MegaCrit.Sts2.Core.Logging.Logger;
 
 namespace HardcoreSts2;
@@ -34,9 +37,41 @@ public partial class Entry
         // 新增内容类后，只要 attribute 写对，通常不需要在入口里手动逐个注册。
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
 
-        // 通过反射自动发现并注册当前程序集中的所有 Modifier 子类。
-        ModifierManager.AutoRegister(assembly, Logger);
+        // 通过反射自动发现当前程序集中的所有 Modifier 子类。
+        // 只发现、不开启：modifier 默认全部关闭，是否开启由角色选择界面的开关决定。
+        ModifierManager.Discover(assembly, Logger);
+
+        // 注册 modifier 开关的存档槽位，并在读档时按存档恢复开关状态。
+        ModifierRunData.Initialize();
+
+        // 在角色选择界面挂载 modifier 开关面板。
+        RegisterModifierSelectPanel();
 
         Logger.Info("HardcoreSts2 initialized.");
+    }
+
+    /// <summary>
+    /// 把场景资源 <see cref="ModifierSelectPanel.ScenePath"/> 挂到
+    /// <see cref="NCharacterSelectScreen"/> 的 <c>_Ready</c> 之后。
+    /// </summary>
+    private static void RegisterModifierSelectPanel()
+    {
+        try
+        {
+            ModNodeAttachmentRegistry.For(ModId)
+                .RegisterReadyChildFromScene<NCharacterSelectScreen, ModifierSelectPanel>(
+                    localId: "character_select_modifier_panel",
+                    scenePath: ModifierSelectPanel.ScenePath,
+                    setup: static (screen, panel) => panel.Bind(screen),
+                    options: new NodeAttachmentOptions
+                    {
+                        Name = ModifierSelectPanel.NodeName,
+                        DuplicatePolicy = NodeAttachmentDuplicatePolicy.ReuseExistingByName,
+                    });
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"[HardcoreSts2] 挂载 modifier 开关面板失败：{ex.Message}");
+        }
     }
 }
