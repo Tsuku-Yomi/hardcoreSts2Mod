@@ -38,7 +38,8 @@ internal static class RoomSlCounter
     /// <summary>
     /// 常驻订阅读档事件，标记「接下来进入的房间是读档重建出来的」。
     /// <para>
-    /// 之所以要在 mod 初始化时就挂上：读档时 modifier 才被存档里的开关启用，
+    /// 由 <c>SaveLoadCheckModifier.OnInitialize</c> 在 mod 加载时调用一次
+    /// （不能放在 <c>OnRegister</c> 里）：读档时 modifier 才被存档里的开关启用，
     /// 那时再订阅会错过本次 <see cref="RunLoadedEvent"/>（事件正在派发中），
     /// 于是就无法区分「读档回到战斗房间」和「正常走进新房间」。
     /// </para>

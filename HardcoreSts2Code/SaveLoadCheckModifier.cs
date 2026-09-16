@@ -35,6 +35,16 @@ public sealed class SaveLoadCheckModifier : Modifier
 
     private Harmony? _harmony;
 
+    /// <summary>
+    /// 常驻订阅读档事件：「改造现实」需要区分「读档回到战斗房间」和「正常走进新房间」，
+    /// 这个订阅必须在读档发生之前就存在（读档时才启用 modifier 会错过本次事件），
+    /// 所以放在一次性初始化里，早于存档开关恢复，且与 modifier 本身的开/关无关。
+    /// </summary>
+    protected override void OnInitialize()
+    {
+        RoomSlCounter.Initialize();
+    }
+
     protected override void OnRegister()
     {
         RoomSlCounter.Attach();

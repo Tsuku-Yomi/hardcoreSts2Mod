@@ -41,9 +41,9 @@ public partial class Entry
         // 只发现、不开启：modifier 默认全部关闭，是否开启由角色选择界面的开关决定。
         ModifierManager.Discover(assembly, Logger);
 
-        // 常驻盯住读档事件：「改造现实」需要区分「读档回到战斗房间」和「正常走进新房间」，
-        // 而这个订阅必须在读档发生之前就存在（读档时才启用 modifier 会错过本次事件）。
-        RoomSlCounter.Initialize();
+        // 对全部 modifier 做一次性初始化：用于必须早于开关状态恢复、且整个运行期只做一次的准备工作
+        // （如常驻订阅读档事件）。必须放在状态恢复之前。
+        ModifierManager.InitializeAll();
 
         // 注册 modifier 开关的存档槽位，并在读档时按存档恢复开关状态。
         ModifierRunData.Initialize();

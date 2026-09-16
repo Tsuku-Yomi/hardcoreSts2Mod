@@ -94,6 +94,30 @@ public static class ModifierManager
         }
     }
 
+    /// <summary>
+    /// 对全部已发现的 modifier 执行一次性初始化（<see cref="Modifier.Initialize"/>），
+    /// 应在 mod 加载阶段（<see cref="Discover"/> 之后）调用一次，之后不再调用。
+    /// <para>
+    /// 无论 modifier 当前是否开启都会初始化：初始化用于「开关之外」的常驻准备
+    /// （如订阅游戏生命周期事件），必须早于任何开关状态恢复。
+    /// 某个 modifier 初始化失败只会记录错误，不会影响其余 modifier，也不会中断加载。
+    /// </para>
+    /// </summary>
+    public static void InitializeAll()
+    {
+        foreach (var id in _order)
+        {
+            try
+            {
+                _modifiers[id].Initialize();
+            }
+            catch (Exception ex)
+            {
+                Entry.Logger.Error($"[ModifierManager] 初始化 modifier 失败：{id},{ex.Message}。");
+            }
+        }
+    }
+
     /// <summary>按 Id 获取已发现的 modifier；不存在则返回 null。</summary>
     public static Modifier? Get(string id) =>
         _modifiers.TryGetValue(id, out var modifier) ? modifier : null;
