@@ -20,7 +20,8 @@ namespace HardcoreSts2.Modifiers;
 public static class ModifierRunData
 {
     /// <summary>存档槽位 key，作为游戏存档中识别该数据的唯一标识。</summary>
-    public const string SlotKey = "tsk_hardcore_modifiers";
+    public const string MOD_SAVE_PREFIX = "tsk_hc_";
+    public const string SlotKey = MOD_SAVE_PREFIX + "modifiers";
 
     private static RunSavedData<ModifierSaveData>? _slot;
 
